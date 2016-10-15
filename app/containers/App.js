@@ -8,7 +8,9 @@ import {
   Text,
   TextInput,
   Image,
-  Navigator
+  Navigator,
+  TouchableHighlight
+
 } from "react-native";
 import {connect} from 'react-redux';
 const styles = StyleSheet.create({
@@ -22,15 +24,68 @@ const styles = StyleSheet.create({
 /**
  * @desc Your app's content goes here mothafucka
  */
-class App extends Component {
+/*class App extends Component {
   static propTypes = {};
   static contextTypes = {};
   constructor(props) {
     super(props);
     this.state = { text: 'Useless Placeholder' };
 
+  }*/
+class Navi extends Component {
+  render() {
+    return (
+      <Navigator
+        initialRoute={{ name: 'main' }}
+        renderScene={this.renderScene.bind(this)}
+      />
+    );
   }
 
+  renderScene(route, navigator) {
+     if(route.name == 'main') {
+       return <Main navigator={navigator}  />
+     }
+     if(route.name == 'stats') {
+       return <Stats navigator={navigator} />
+     }
+  }
+}
+  class Main extends Component {
+  navigate(routeName) {
+    this.props.navigator.push({
+      name: routeName
+    });
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Main
+        </Text>
+        <TouchableHighlight onPress={this.navigate.bind(this, "stats")}>
+          <Text>TO STATS PAGE</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+}
+
+class Stats extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          Stats
+        </Text>
+        <TouchableHighlight onPress={()=>{this.props.navigator.pop()}}>
+          <Text>BACK</Text>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+}
+/*
   componentDidMount(){
     var fetchTripAdvisor = function (lat,long,_this) {
       // 42.33141,-71.099396
@@ -59,19 +114,10 @@ class App extends Component {
 
   }
   render() {
-    
     console.log(this.state, "IN RENDER FUNCTION");
-    const routes = [
-    {title: 'First Scene', index: 0},
-    {title: 'Second Scene', index: 1},
-    ];
     return (
       <View style={styles.app} >
-        <TextInput
-        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-        onChangeText={(text) => this.setState({text})}
-        value={this.state.text}
-        />
+      
       {this.state.locations && this.state.locations.map(function(location) {
         return (
           <View key={location.location_id} style={{backgroundColor: 'black'}}>
@@ -85,12 +131,14 @@ class App extends Component {
       </View>
     );
   }
-}
+}*/
 
-export default connect(
+/*export default connect(
   state => {
     return {
       propName: state.myDataGoesHere
     }
   }
-)(App);
+)(App);*/
+
+AppRegistry.registerComponent('navi', () => Navi);
