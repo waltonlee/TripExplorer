@@ -25,10 +25,10 @@ class App extends Component {
   static contextTypes = {};
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { text: 'Useless Placeholder' };
 
   }
-  }
+  
   componentDidMount(){
     var fetchTripAdvisor = function (lat,long,_this) {
       // 42.33141,-71.099396
@@ -64,7 +64,14 @@ class App extends Component {
           <View style={{backgroundColor: 'grey'}}>
             <Text style={{color: 'white'}}>{location.name}</Text>
             <Text style={{color: 'white'}}>{location.string}</Text>
+
+            <TextInput
+            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={(text) => this.setState({text})}
+            value={this.state.text}
+            />
           </View>
+         
         );
       })}
       </View>
