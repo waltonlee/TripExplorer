@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   }
 });
 
-    var width = 200;
+    var width = 350;
     var height = 500;
 
 /**
@@ -49,7 +49,7 @@ class App extends Component {
       .charge(-300)
       .linkDistance(150)
       .size([width, height]);
-    this.state = { text: 'Useless Placeholder',
+    this.state = { text: 'Your Current Location',
     nodes: [],
     links: [],
     force: force };
@@ -67,7 +67,7 @@ class App extends Component {
         console.log(data)
         _this.setState({
           locations: data,
-          text: ''
+          text: 'Your Current Location'
         });
       });
     }
@@ -87,25 +87,17 @@ class App extends Component {
   }
   render() {
     console.log(this.state, "IN RENDER FUNCTION");
-        // <TextInput
-        // style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-        // onChangeText={(text) => this.setState({text})}
-        // value={this.state.text}
-        // />
+
     return (
       <View style={styles.app}>
-        <View>
+        <TextInput
+        style={{height: 40, textAlign: 'center',borderColor: 'gray', borderWidth: 1}}
+        onChangeText={(text) => this.setState({text})}
+        value={this.state.text}
+        />
+            <View>
           <Graph nodes={this.state.nodes} links={this.state.links} force={this.state.force} parentApp={this}/>
         </View>
-      {this.state.locations && this.state.locations.map(function(location) {
-        return (
-          <View key={location.location_id} style={{backgroundColor: 'grey'}}>
-            <Text style={{color: 'white'}}>{location.name}</Text>
-            <Text style={{color: 'white'}}>{location.string}</Text>
-          </View>
-
-        );
-      })}
       </View>
     );
   }
@@ -117,22 +109,26 @@ class App extends Component {
                 x: width / 2,
                 y: height / 2,
                 key: 0,
-                size: 5
+                size: 10,
+                name: ' '
             }, {
                 x: width / 2,
                 y: height / 2,
                 key: 1,
-                size: 6
+                size: 20,
+                name: 'Eat'
             }, {
                 x: width / 2,
                 y: height / 2,
                 key: 2,
-                size: 7
+                size: 18,
+                name: 'Play'
             }, {
                 x: width / 2,
                 y: height / 2,
                 key: 3,
-                size: 8
+                size: 15,
+                name: 'Sleep'
             }
 
         ], links: [{
@@ -163,13 +159,14 @@ class App extends Component {
     var links = new Array();
 
     var locationsFromApi = this.state.locations && this.state.locations.map(function(location) {
+      console.log(location)
       distances.push(parseFloat(location.distance, 10))
       nodes.push({
           x: width / 2,
           y: height / 2,
           key: i,
           size: 15,
-          name: location.name
+          name: '' || location.name
       });
       if(i > 0) {
           links.push({
