@@ -28,13 +28,29 @@ class App extends Component {
     this.state = {};
   }
   componentDidMount(){
-    fetch(`https://api.tripadvisor.com/api/partner/2.0/map/42.33141,-71.099396?key=89DE2CFC0C1C43978B484B55F9A514EC`)
-    .then(r => r.json())
-    .then(({data}) => {
-      this.setState({
-        locations: data
+    var fetchTripAdvisor = function (lat,long,_this) {
+      // 42.33141,-71.099396
+      console.log(`https://api.tripadvisor.com/api/partner/2.0/map/${lat},${long}?key=89DE2CFC0C1C43978B484B55F9A514EC`)
+      fetch(`https://api.tripadvisor.com/api/partner/2.0/map/${lat},${long}?key=89DE2CFC0C1C43978B484B55F9A514EC`)
+      .then(r => r.json())
+      .then(({data}) => {
+        _this.setState({
+          locations: data
+        });
       });
-    });
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        var initialPosition =position;
+        this.setState({initialPosition});
+        fetchTripAdvisor(position.coords.latitude, position.coords.longitude, this);
+      },
+      (error) => alert(JSON.stringify(error)),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    console.log(this.state);
+
 
   }
   render() {
