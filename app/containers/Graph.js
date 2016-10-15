@@ -27,7 +27,7 @@ import Svg,{
 } from 'react-native-svg';
 import {Text as SvgText} from 'react-native-svg';
 import {connect} from 'react-redux';
-const width = 960;
+const width = 200;
 const height = 500;
 import D3 from 'd3';
 var Graph = React.createClass({
@@ -66,14 +66,9 @@ var Graph = React.createClass({
     var nodes = this.props.nodes.map((node) => {
       var transform = 'translate(' + node.x + ',' + node.y + ')';
       var boundClick = this.localUpdateData.bind(this, node);
-      //transform={transform}
+      //
       return (
-        <View>
-        <G className='node' key={node.key} >
-          <Circle r={node.size} onClick={boundClick} />
-          <SvgText x={node.size + 5} dy='.35em'>{node.name}</SvgText>
-        </G>
-        </View>
+          <Circle r={node.size} onPress={boundClick} translateX={node.x} translateY={node.y} />
       );
     });
     var links = this.props.links.map( (link) => {
@@ -89,8 +84,8 @@ var Graph = React.createClass({
       <View>
         <Svg width={width} height={height}>
           <G>
-            {links}
             {nodes}
+            {links}
           </G>
         </Svg>
       </View>

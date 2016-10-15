@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
 });
 
 
-    var width = 960;
+    var width = 200;
     var height = 500;
 
 /**
@@ -88,13 +88,16 @@ class App extends Component {
   }
   render() {
     console.log(this.state, "IN RENDER FUNCTION");
+        // <TextInput
+        // style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+        // onChangeText={(text) => this.setState({text})}
+        // value={this.state.text}
+        // />
     return (
       <View style={styles.app}>
-        <TextInput
-        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-        onChangeText={(text) => this.setState({text})}
-        value={this.state.text}
-        />
+        <View>
+          <Graph nodes={this.state.nodes} links={this.state.links} force={this.state.force} parentApp={this}/>
+        </View>
       {this.state.locations && this.state.locations.map(function(location) {
         return (
           <View key={location.location_id} style={{backgroundColor: 'grey'}}>
@@ -104,9 +107,6 @@ class App extends Component {
 
         );
       })}
-        <View>
-          <Graph nodes={this.state.nodes} links={this.state.links} force={this.state.force} parentApp={this}/>
-        </View>
       </View>
     );
   }
