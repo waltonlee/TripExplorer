@@ -26,6 +26,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+
+  }
   }
   componentDidMount(){
     fetch(`https://api.tripadvisor.com/api/partner/2.0/map/42.33141,-71.099396?key=89DE2CFC0C1C43978B484B55F9A514EC`)
