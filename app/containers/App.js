@@ -32,59 +32,35 @@ const styles = StyleSheet.create({
     this.state = { text: 'Useless Placeholder' };
 
   }*/
-class Navi extends Component {
+export default class NavAllDay extends Component {
   render() {
+     const routes = [
+    {title: 'First Scene', index: 0},
+    {title: 'Second Scene', index: 1},
+  ];
     return (
-      <Navigator
-        initialRoute={{ name: 'main' }}
-        renderScene={this.renderScene.bind(this)}
-      />
-    );
-  }
-
-  renderScene(route, navigator) {
-     if(route.name == 'main') {
-       return <Main navigator={navigator}  />
-     }
-     if(route.name == 'stats') {
-       return <Stats navigator={navigator} />
-     }
-  }
-}
-  class Main extends Component {
-  navigate(routeName) {
-    this.props.navigator.push({
-      name: routeName
-    });
-  }
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Main
-        </Text>
-        <TouchableHighlight onPress={this.navigate.bind(this, "stats")}>
-          <Text>TO STATS PAGE</Text>
+       <Navigator
+      initialRoute={routes[0]}
+      initialRouteStack={routes}
+      renderScene={(route, navigator) =>
+        <TouchableHighlight onPress={() => {
+          if (route.index === 0) {
+            navigator.push(routes[1]);
+          } else {
+            navigator.pop();
+          }
+        }}>
+        <Text>Hello {route.title}!</Text>
         </TouchableHighlight>
-      </View>
+      }
+      style={{padding: 100}}
+    />
+     
+      
     );
   }
 }
 
-class Stats extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Stats
-        </Text>
-        <TouchableHighlight onPress={()=>{this.props.navigator.pop()}}>
-          <Text>BACK</Text>
-        </TouchableHighlight>
-      </View>
-    );
-  }
-}
 /*
   componentDidMount(){
     var fetchTripAdvisor = function (lat,long,_this) {
@@ -139,6 +115,6 @@ class Stats extends Component {
       propName: state.myDataGoesHere
     }
   }
-)(App);*/
+)(NavAllDay);*/
 
-AppRegistry.registerComponent('navi', () => Navi);
+/*AppRegistry.registerComponent('navi', () => Navi);*/
