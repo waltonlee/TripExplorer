@@ -1,0 +1,3 @@
+rootProject.name = 'Polyhack2016ReactNative'
+
+include ':app'
