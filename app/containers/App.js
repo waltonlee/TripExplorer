@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  Image
+  Image,
+  Navigator
 } from "react-native";
 import {connect} from 'react-redux';
 const styles = StyleSheet.create({
@@ -56,12 +57,16 @@ class App extends Component {
     );
     console.log(this.state);
 
-
   }
   render() {
+    
     console.log(this.state, "IN RENDER FUNCTION");
+    const routes = [
+    {title: 'First Scene', index: 0},
+    {title: 'Second Scene', index: 1},
+    ];
     return (
-      <View style={styles.app}>
+      <View style={styles.app} >
         <TextInput
         style={{height: 40, borderColor: 'gray', borderWidth: 1}}
         onChangeText={(text) => this.setState({text})}
@@ -69,7 +74,7 @@ class App extends Component {
         />
       {this.state.locations && this.state.locations.map(function(location) {
         return (
-          <View key={location.location_id} style={{backgroundColor: 'grey'}}>
+          <View key={location.location_id} style={{backgroundColor: 'black'}}>
             <Text style={{color: 'white'}}>{location.name}</Text>
             <Text style={{color: 'white'}}>{location.string}</Text>
 
