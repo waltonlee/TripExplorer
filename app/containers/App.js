@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   }
 });
 
-
     var width = 200;
     var height = 500;
 

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  Dimesions,
   Image
 } from "react-native";
 import Svg,{
@@ -18,6 +19,7 @@ import Svg,{
     Line,
     Path,
     Polygon,
+    Text as SvgText,
     Polyline,
     Rect,
     Symbol,
@@ -25,7 +27,6 @@ import Svg,{
     Defs,
     Stop
 } from 'react-native-svg';
-import {Text as SvgText} from 'react-native-svg';
 import {connect} from 'react-redux';
 const width = 200;
 const height = 500;
@@ -68,12 +69,16 @@ var Graph = React.createClass({
       var boundClick = this.localUpdateData.bind(this, node);
       //
       return (
-          <Circle r={node.size} onPress={boundClick} translateX={node.x} translateY={node.y} />
+        <G className='node' key={node.key} translateX={node.x} translateY={node.y} >
+        <Circle r={node.size} key={node.key+"c"} onPress={boundClick}  />
+           <SvgText x={node.size + 5} dy='.35em'>{node.key}</SvgText>
+         </G>
       );
     });
+    // use React to draw all the nodes, d3 calculates the x and y
     var links = this.props.links.map( (link) => {
       return (
-        <Line className='link' key={link.key} strokeWidth={link.size}
+        <Line stroke="red" key={link.key} strokeWidth={link.size}
           x1={link.source.x} x2={link.target.x} y1={link.source.y} y2={link.target.y} />
       );
     });
@@ -84,8 +89,8 @@ var Graph = React.createClass({
       <View>
         <Svg width={width} height={height}>
           <G>
-            {nodes}
             {links}
+            {nodes}
           </G>
         </Svg>
       </View>
