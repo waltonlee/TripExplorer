@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <script src="https://fb.me/react-0.14.3.js"></script>
+  <script src="https://fb.me/react-dom-0.14.3.js"></script>
+  <script src="https://npmcdn.com/babel-core@5.8.34/browser.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://underscorejs.org/underscore-min.js"></script>
+  <script src="generate_data.js"></script>
+
+  <link rel="stylesheet" href="example.css" type="text/css" />
+</head>
+
+<body>
+
+<div id="main" />
+
+<script type="text/babel">
+
+var width = 960;
+var height = 500;
+var force = d3.layout.force()
+  .charge(-300)
+  .linkDistance(150)
+  .size([width, height]);
+
+var Graph = React.createClass({
+  componentWillMount() {
+    force.on('tick', () => {
+      // after force calculation starts, call
+      // forceUpdate on the React component on each tick
+      this.forceUpdate()
+    });
+  },
+
+  componentWillReceiveProps(nextProps) {
+    // we should actually clone the nodes and links
+    // since we're not supposed to directly mutate
+    // props passed in from parent, and d3's force function
+    // mutates the nodes and links array directly
+    // we're bypassing that here for sake of brevity in example
+    force.nodes(nextProps.nodes).links(nextProps.links);
+
+    force.start();
+  },
+
+  localUpdateData(node) {
+    this.props.nodes.map(function(n,x) {
+      if (n.key === node.key) {
+        n.selected = true;
+      } else {
+        n.selected = false;
+      }
+    });
+    this.props.parentApp.updateData();
+  },
+
+  render() {
+    // use React to draw all the nodes, d3 calculates the x and y
+    var nodes = _.map(this.props.nodes, (node) => {
+      var transform = 'translate(' + node.x + ',' + node.y + ')';
+      var boundClick = this.localUpdateData.bind(this, node);
+      return (
+        <g className='node' key={node.key} transform={transform}>
+          <circle r={node.size} onClick={boundClick} />
+          <text x={node.size + 5} dy='.35em'>{node.name}</text>
+        </g>
+      );
+    });
+    var links = _.map(this.props.links, (link) => {
+      return (
+        <line className='link' key={link.key} strokeWidth={link.size}
+          x1={link.source.x} x2={link.target.x} y1={link.source.y} y2={link.target.y} />
+      );
+    });
+
+    return (
+      <svg width={width} height={height}>
+        <g>
+          {links}
+          {nodes}
+        </g>
+      </svg>
+    );
+  }
+});
+
+var App = React.createClass({
+  getInitialState() {
+    return {
+      nodes: [],
+      links: [],
+    };
+  },
+
+  componentDidMount() {
+    this.fetchTripAdvisor(42.33141,-71.099396, this);
+    this.firstData();
+  },
+
+  fetchTripAdvisor(lat,long, _this) {
+      // 42.33141,-71.099396
+      console.log(`https://api.tripadvisor.com/api/partner/2.0/map/${lat},${long}?key=89DE2CFC0C1C43978B484B55F9A514EC`);
+      fetch(`https://api.tripadvisor.com/api/partner/2.0/map/${lat},${long}?key=89DE2CFC0C1C43978B484B55F9A514EC`)
+      .then(r => r.json())
+      .then(({data}) => {
+        _this.setState({
+          locations: data
+        });
+      });
+    },
+
+  firstData() {
+    // randomData is loaded in from external file generate_data.js
+    // and returns an object with nodes and links
+    var newState = {nodes: [{
+                x: width / 2,
+                y: height / 2,
+                key: 0,
+                size: 5
+            }, {
+                x: width / 2,
+                y: height / 2,
+                key: 1,
+                size: 6
+            }, {
+                x: width / 2,
+                y: height / 2,
+                key: 2,
+                size: 7
+            }, {
+                x: width / 2,
+                y: height / 2,
+                key: 3,
+                size: 8
+            }
+
+        ], links: [{
+                key: "0,1",
+                size: 3,
+                source: 0,
+                target: 1
+            }, {
+                key: "0,2",
+                size: 2,
+                source: 0,
+                target: 2
+            }, {
+                key: "0,3",
+                size: 1,
+                source: 0,
+                target: 3
+            }]};
+    this.setState(newState);
+  },
+  updateData() {
+    console.log(this.state.nodes);
+    // randomData is loaded in from external file generate_data.js
+    // and returns an object with nodes and links
+    var distances = new Array();
+    var i = 0;
+    var nodes = new Array();
+    var links = new Array();
+
+    var locationsFromApi = this.state.locations && this.state.locations.map(function(location) {
+      distances.push(parseFloat(location.distance, 10))
+      nodes.push({
+          x: width / 2,
+          y: height / 2,
+          key: i,
+          size: 15,
+          name: location.name
+      });
+      if(i > 0) {
+          links.push({
+              key: ("0,"+i),
+              size: Math.pow((13*distances[i]),2),
+              source: 0,
+              target: i
+
+          });
+      };
+      i = i+1;
+    });
+    if(nodes.length > 0 && links.length > 0) {
+        var newState2 = {nodes, links}
+    }
+    if(newState2) {
+        //console.log(newState2);
+        this.setState(newState2);
+
+    }
+  },
+
+  render() {
+    return (
+      <div>
+        <div className="update" onClick={this.updateData}>update</div>
+        <Graph nodes={this.state.nodes} links={this.state.links} parentApp={this}/>
+      </div>
+    );
+  },
+});
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('main')
+);
+
+</script>
+
+</body>
