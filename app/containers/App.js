@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
   Text,
+  TextInput,
   Image
 } from "react-native";
 import {connect} from 'react-redux';
@@ -28,7 +29,7 @@ class App extends Component {
     this.state = { text: 'Useless Placeholder' };
 
   }
-  
+
   componentDidMount(){
     var fetchTripAdvisor = function (lat,long,_this) {
       // 42.33141,-71.099396
@@ -36,12 +37,14 @@ class App extends Component {
       fetch(`https://api.tripadvisor.com/api/partner/2.0/map/${lat},${long}?key=89DE2CFC0C1C43978B484B55F9A514EC`)
       .then(r => r.json())
       .then(({data}) => {
+        console.log(data)
         _this.setState({
-          locations: data
+          locations: data,
+          text: ''
         });
       });
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         var initialPosition =position;
@@ -59,19 +62,19 @@ class App extends Component {
     console.log(this.state, "IN RENDER FUNCTION");
     return (
       <View style={styles.app}>
+        <TextInput
+        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+        onChangeText={(text) => this.setState({text})}
+        value={this.state.text}
+        />
       {this.state.locations && this.state.locations.map(function(location) {
         return (
-          <View style={{backgroundColor: 'grey'}}>
+          <View key={location.location_id} style={{backgroundColor: 'grey'}}>
             <Text style={{color: 'white'}}>{location.name}</Text>
             <Text style={{color: 'white'}}>{location.string}</Text>
 
-            <TextInput
-            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-            onChangeText={(text) => this.setState({text})}
-            value={this.state.text}
-            />
           </View>
-         
+
         );
       })}
       </View>
